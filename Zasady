@@ -1,0 +1,54 @@
+Zasady techniczne Tieto CUP II
+1. Programy napisane w C# muszą się kompilować i uruchamiać w środowisku Windows 7.
+2. Programy napisane w pozostałych językach muszą się uruchamiać w środowisku Windows 7 lub Ubuntu 12.04.
+3. Komunikacja między programem a silnikiem gry odbywa się po gniazdach sieciowych tcp
+4. Program musi obsługiwać następujące parametry wejściowe z konsoli :
+
+a. –h nazwa_hosta, czyli adres docelowy silnika gry
+b. –p numer_portu, czyli numer portu na którym silnik gry nasłuchuje
+c. –g numer_gracza, czyli nadany unikalny identyfikator dla gracza. Każdy gracz przez cały okres rozgrywek będzie posiadał własny numer identyfikacyjny, będący liczbą z zakresu <1,65535 >
+d. –f nazwa_pliku, czyli plik do którego program może zapisywać swoje dane w dowolnym formacie o nie przekraczalnym rozmiarze 5MB = 5*1024*1024 bajty, plik będzie przekazywany między rozgrywkami
+
+5. Komunikacja między serwerem gry a graczem odbywa się w ustalony sposób opisany poniżej:
+
+a. Gracz łączy się do gniazda sieciowego tcp za pomocą portu oraz adresu podanego w trakcie uruchomienia programu
+b. Gdy obaj gracze połączą się do silnika gry, silnik wysyła do pierwszego gracza informację o stanie planszy, opisaną poniżej
+c. Gracz po obliczeniu swojego ruchu wysyła do silnika gry pozycję gdzie stawia kropkę oraz ewentualną listę kropek, które łączy w bazę. Dane wysyłane są w postaci tekstowej:
+X Y G\n
+C\n
+X1 Y1\n
+X2 Y2\n
+    ...
+XC YC\n
+Gdzie: 
+X – pozycja w poziomie na planszy, gdzie gracz stawia swoją kropkę
+Y – pozycja w pionie na planszy, gdzie gracz stawia swoją kropkę
+G – numer gracza podany w trakcie uruchomienia gry
+C – liczba punktów, z których gracz tworzy bazę, jeśli w danym momencie gracz nie tworzy bazę należy wpisać tutaj 0
+Xi – pozycja w poziomie punktu, który wejdzie w skład bazy
+Yi – pozycja w pionie punktu, który wejdzie w skład bazy
+d. Stan planszy wysyłany do klienta jest w postaci tekstowej. Jest to sygnał do wykonania kolejnego ruchu przez gracza. Format planszy wygląda następująco:
+L_Count\n
+X1 Y1 G\n
+B C G\tX1 Y1\tX2 Y2\t … Xc Yc\n
+Gdzie:
+L_Count - liczba wierszy w opisie 
+X – pozioma pozycja kropki
+Y – pionowa pozycja kropki
+G – nr gracza
+B – literał określający, że dalsze dane opisują bazę
+C – liczba punktów na które składa się baza
+G – nr gracza
+e. Plansza jest uporządkowana z góry do dołu i od lewej do prawej, czyli w górnym lewym rogu znajduje się punkt 1,1 a w prawym dolnym punkt 40,30 , przykładowa rozgrywka jest przedstawiona na Rysunek 1. Proszę zwrócić uwagę, że stawiamy kolejne kropki na przecięciu linii, czyli zaczynamy od pozycji 1,1 a nie 0,0.
+
+ 
+Rys. 1 Przykładowa rozgrywka.
+
+ 
+
+f. Stawianie kolejnej kropki dozwolone jest o ile odległość od jakiejkolwiek kropki na planszy nie jest większa niż dwa pola, jedynym odstępstwem od tej reguły jest rozpoczynanie rozgrywki, wtedy gracz może postawić kropkę w dowolnym dozwolonym punkcie na planszy.
+g. Przy jakiejkolwiek próbie postawienia kropki w niedozwolonej odległości, bądź w miejscu które zostało zamknięte jako baza, lub w miejscu gdzie już istnieje inna kropka, rozgrywka zostaje przerwana a gracz automatycznie przegrywa.
+h. Każdy program podlega również ograniczeniom czasowym :
+
+• Czas na połączenie z serwerem od uruchomienia aplikacji wynosi 15 sekund
+• Czas na wykonanie kolejnego ruchu od momentu otrzymania planszy wynosi 5 sekund

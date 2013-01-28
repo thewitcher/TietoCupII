@@ -10,7 +10,6 @@
 #include <arpa/inet.h>
 #include "connection.h"
 #include "exc.h"
-#include "logger.h"
 #include "algorithm.h"
 
 Connection::Connection( const ConnectionData & data ):
@@ -63,7 +62,7 @@ void Connection::initConnection()
     {
         if( ( m_socketFileDescriptor = socket( p->ai_family, p->ai_socktype, p->ai_protocol ) ) == -1 )
         {
-            Logger::log( "Cannot create client socket" );
+            qDebug() << "Cannot create client socket";
             continue;
         }
 
@@ -83,7 +82,7 @@ void Connection::initConnection()
     }
 
     inet_ntop( p->ai_family, get_in_addr( ( struct sockaddr * ) p->ai_addr ), s, sizeof( s ) );
-    Logger::log( "Client: connecting to the server" );
+    qDebug() << "Client: connecting to the server";
 
     freeaddrinfo( servinfo ); // All done with this structure, so delete all
 }
@@ -108,9 +107,7 @@ void Connection::startConnection()
 
         buf[ numberOfBytes ] = '\0'; // Buffer with received signal
 
-        m_algorithm->processResponse( buf );
-
-        send(  m_socketFileDescriptor, m_algorithm->playerResponse(), 100, 0 ); // Here we send response from player
+        send(  m_socketFileDescriptor, m_algorithm->processResponse( buf ), 100, 0 ); // Here we send response from player
         Helper::decodeSignal( buf );
     }
 }

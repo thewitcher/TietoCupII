@@ -3,7 +3,6 @@
 #include "helper.h"
 #include "exc.h"
 #include "connection.h"
-#include "logger.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +15,7 @@ int main(int argc, char *argv[])
     }
     catch( EXC::Exception e )
     {
-        Logger::log( e.what() );
+        qDebug() << e.what();
         exit( 1 );
     }
 

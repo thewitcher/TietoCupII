@@ -3,7 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "logger.h"
+#include <QString>
+#include <QDebug>
 
 using namespace std;
 
@@ -38,16 +39,6 @@ struct ReceivedSignalData
 
     // base points coordinates
     vector< Coordinates > moves;
-
-    void logeMe()
-    {
-        for( int i = 0 ; i < rowsCount ; i++ )
-        {
-            char temp[ 1000 ];
-            sprintf( temp, "X: %i, Y: %i, Gracz: %i\n", moves.at( i ).posX, moves.at( i ).posY, moves.at( i ).who );
-            Logger::log( temp );
-        }
-    }
 };
 
 class Helper
@@ -55,9 +46,7 @@ class Helper
 public:
     static ConnectionData connectionData( int argc, char * argv[] );
     static ReceivedSignalData decodeSignal( const char * msg );
-    static void encodeSignal( char x, char y, char player, char * resultSignal );
-    static int toInt( char a1, char a2 );
-    static void next( char & a1, char & a2, const char * & msg );
+    static const QString encodeSignal( int x, int y, int player );
 };
 
 #endif // HELPER_H

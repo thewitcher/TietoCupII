@@ -1,16 +1,27 @@
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
+#include <QString>
+#include "helper.h"
+
+struct Element
+{
+    int m_player;
+};
+
 class Algorithm
 {
 public:
     Algorithm();
 
-    void processResponse( const char * response );
-    const char * playerResponse() const;
+    const char * processResponse( const char * response );
 
 private:
-    char * m_playerResponse;
+    QString m_playerResponse;
+    Element m_matrix[ 40 ][ 30 ];
+
+    void buildMatrix();
+    void updateMatrix( ReceivedSignalData & rcData );
 };
 
 #endif // ALGORITHM_H

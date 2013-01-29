@@ -50,17 +50,33 @@ ReceivedSignalData Helper::decodeSignal( const char * msg )
 
     rcData.rowsCount = splitedMsgString.at( 0 ).toInt();
 
-    for( int i = 0 ; i < rcData.rowsCount ; i++ )
+    for( int i = 0 ; i < rcData.rowsCount ; i++ ) // the last one could be base description, so I treat it particularly
     {
-        Coordinates c;
-        QStringList line = splitedMsgString.at( i + 1 ).split( ' ' );
+        if( splitedMsgString.at( i + 1 ).at( 0 ) == 'B' ) // if first letter is "B" then it describes base points
+        {
+            QStringList base = splitedMsgString.at( i + 1 ).split( '\t' );
+            QStringList baseData = base.at( 0 ).split( " " );
+            vector< pair< int,int > > vec;
 
+            for( int point = 0 ; point < baseData.at( 1 ).toInt() ; point++ )
+            {
+                QStringList basePoint = base.at( point + 1 ).split( ' ' );
+                pair< int, int > p( basePoint.at( 0 ).toInt(), basePoint.at( 1 ).toInt() );
+                vec.push_back( p );
+            }
 
-        c.column = line.at( 0 ).toInt();
-        c.row = line.at( 1 ).toInt();
-        c.who = line.at( 2 ).toInt();
+            rcData.basePoint.insert( make_pair( baseData.at( 2 ).toInt(), vec ) );
+        }
+        else
+        {
+            Coordinates c;
+            QStringList line = splitedMsgString.at( i + 1 ).split( ' ' );
 
-        rcData.moves.push_back( c );
+            c.column = line.at( 0 ).toInt();
+            c.row = line.at( 1 ).toInt();
+            c.who = line.at( 2 ).toInt();
+            rcData.moves.push_back( c );
+        }
     }
 
     return rcData;

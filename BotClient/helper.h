@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <QString>
 #include <QDebug>
 
@@ -29,16 +30,13 @@ struct Coordinates
 
 struct ReceivedSignalData
 {
-    // order is very important here
-
     // how many rows is in received signal
     int rowsCount;
 
-    // if true then player has created a base
-    bool isBaseCreated;
-
     // base points coordinates
     vector< Coordinates > moves;
+
+    multimap< int, vector< pair< int, int > > > basePoint; // for each player there is a set of points that are created a base
 };
 
 class Helper

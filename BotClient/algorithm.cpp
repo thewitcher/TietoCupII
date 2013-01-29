@@ -13,17 +13,20 @@ const char * Algorithm::processResponse( const char * response )
     ReceivedSignalData rcData = Helper::decodeSignal( response );
 
     updateMatrix( rcData );
+    vector< std::pair< int, int > > valid = validMoves();
 
-    m_playerResponse = Helper::encodeSignal( 2, 2, 2 );
+    std::pair< int, int > firstValid = valid.at( 0 );
+
+    m_playerResponse = Helper::encodeSignal( firstValid.second, firstValid.first, 2 );
 
     return m_playerResponse.toAscii().data();
 }
 
 void Algorithm::buildMatrix()
 {
-    for( int row = 0 ; row < 40 ; row++ )
+    for( int row = 0 ; row < 30 ; row++ )
     {
-        for( int column = 0 ; column < 30 ; column++ )
+        for( int column = 0 ; column < 40 ; column++ )
         {
             m_matrix[ row ][ column ].m_player = 0;
         }
@@ -34,15 +37,89 @@ void Algorithm::updateMatrix( ReceivedSignalData & rcData )
 {
     for( int i = 0 ; i < rcData.rowsCount; i++ )
     {
-        m_matrix[ rcData.moves.at( i ).posY - 1 ][ rcData.moves.at( i ).posX - 1 ].m_player = rcData.moves.at( i ).who;
+        m_matrix[ rcData.moves.at( i ).row - 1 ][ rcData.moves.at( i ).column - 1 ].m_player = rcData.moves.at( i ).who;
+    }
+}
+
+vector< std::pair< int, int > > Algorithm::validMoves() const
+{
+    vector< std::pair< int, int > > temp;
+
+    for( int row = 0 ; row < 30 ; row++ )
+    {
+        for( int column = 0 ; column < 40 ; column++ )
+        {
+            if( m_matrix[ row ][ column ].m_player == 0 )
+            {
+                if( hasNeighbour( row, column ) == true )
+                {
+                    temp.push_back( std::pair< int, int >( row + 1, column + 1 ) ); // because matrix and game are moved by one point
+                }
+            }
+        }
     }
 
-    for( int row = 0 ; row < 40 ; row++ )
+    return temp;
+}
+
+bool Algorithm::hasNeighbour( int row, int column ) const
+{
+    if( ( row - 1 >= 0 ) && ( column - 1 >= 0 ) )
     {
-        for( int column = 0 ; column < 30 ; column++ )
+        if( m_matrix[ row - 1 ][ column - 1 ].m_player != 0  )
         {
-            cout << m_matrix[ row ][ column ].m_player << " ";
+            return true;
         }
-        cout << endl;
     }
+    if( row - 1 >= 0 )
+    {
+        if( m_matrix[ row ][ column - 1 ].m_player != 0  )
+        {
+            return true;
+        }
+    }
+    if( ( row - 1 >= 0 ) && ( column + 1 < 40 ) )
+    {
+        if( m_matrix[ row - 1 ][ column + 1 ].m_player != 0  )
+        {
+            return true;
+        }
+    }
+    if( column - 1 >= 0 )
+    {
+        if( m_matrix[ row ][ column - 1 ].m_player != 0  )
+        {
+            return true;
+        }
+    }
+    if( column + 1 < 40 )
+    {
+        if( m_matrix[ row ][ column + 1 ].m_player != 0  )
+        {
+            return true;
+        }
+    }
+    if( ( row + 1 < 30 ) && ( column - 1 >= 0 ) )
+    {
+        if( m_matrix[ row + 1 ][ column - 1 ].m_player != 0  )
+        {
+            return true;
+        }
+    }
+    if( row + 1 < 30 )
+    {
+        if( m_matrix[ row + 1 ][ column ].m_player != 0  )
+        {
+            return true;
+        }
+    }
+    if( ( row + 1 < 30 ) && ( column + 1 < 40 ) )
+    {
+        if( m_matrix[ row + 1 ][ column + 1 ].m_player != 0  )
+        {
+            return true;
+        }
+    }
+
+    return false;
 }

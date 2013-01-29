@@ -56,8 +56,8 @@ ReceivedSignalData Helper::decodeSignal( const char * msg )
         QStringList line = splitedMsgString.at( i + 1 ).split( ' ' );
 
 
-        c.posX = line.at( 0 ).toInt();
-        c.posY = line.at( 1 ).toInt();
+        c.column = line.at( 0 ).toInt();
+        c.row = line.at( 1 ).toInt();
         c.who = line.at( 2 ).toInt();
 
         rcData.moves.push_back( c );

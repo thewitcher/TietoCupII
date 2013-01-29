@@ -18,10 +18,12 @@ public:
 
 private:
     QString m_playerResponse;
-    Element m_matrix[ 40 ][ 30 ];
+    Element m_matrix[ 30 ][ 40 ];
 
     void buildMatrix();
     void updateMatrix( ReceivedSignalData & rcData );
+    vector< std::pair< int, int > > validMoves() const;
+    bool hasNeighbour( int row, int column ) const;
 };
 
 #endif // ALGORITHM_H

@@ -22,8 +22,8 @@ struct ConnectionData
 
 struct Coordinates
 {
-    int posX;
-    int posY;
+    int row;
+    int column;
     int who;
 };
 
